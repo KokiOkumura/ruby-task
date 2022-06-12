@@ -13,15 +13,17 @@ end
 class Drink
   attr_accessor :name, :price, :stock
 
-  def initialize(name: 'cola', price: 120, stock: 5)
+  def initialize(name:, price:)
     @name = name
     @price = price
-    @stock = stock
+    @stock = 0
   end
 end
 
 class Vending_Machine
   attr_accessor :sales
+
+  DRINK_LIST = []
 
   def initialize(sales = 0)
     @sales = sales
@@ -29,11 +31,7 @@ class Vending_Machine
 
   def in_stock(drink, stock)
     drink.stock += stock
-    @drink_list = { name: drink.name, price: drink.price, stock: drink.stock }
-  end
-
-  def drink_info
-    p @drink_list
+    DRINK_LIST.push(drink)
   end
 
   def to_buy(suica, drink)
@@ -49,10 +47,9 @@ suica = Suica.new(500)
 suica.charge_amount(1000)
 suica.charge_amount(1000)
 
-drink = Drink.new
+cola = Drink.new(name: 'cola', price: 120)
 
 vending_machine = Vending_Machine.new
-vending_machine.in_stock(drink)
 # vending_machine.in_stock(cola, 5)
 # vending_machine.in_stock(cola, 3)
 
@@ -65,4 +62,4 @@ vending_machine.in_stock(drink)
 
 # vending_machine.to_buy(suica, redbull)
 
-# vending_machine.drink_info
+# p Vending_Machine::DRINK_LIST

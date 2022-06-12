@@ -21,17 +21,26 @@ class Drink
 end
 
 class Vending_Machine
-  attr_accessor :sales
-
-  DRINK_LIST = []
+  attr_accessor :sales, :drink_list
 
   def initialize(sales = 0)
     @sales = sales
+    @drink_list = []
   end
 
+  # drinkと本数を指定して在庫に追加する
   def in_stock(drink, stock)
     drink.stock += stock
-    DRINK_LIST.push(drink)
+    @drink_list.push(drink).uniq!
+  end
+
+  # 商品の在庫を表示させる
+  def stock_info
+    @drink_list.each do |item|
+      puts item.name
+      puts item.price
+      puts item.stock
+    end
   end
 
   def to_buy(suica, drink)
@@ -50,7 +59,7 @@ suica.charge_amount(1000)
 cola = Drink.new(name: 'cola', price: 120)
 
 vending_machine = Vending_Machine.new
-vending_machine.in_stock(cola, 5)
+vending_machine.in_stock(cola, 10)
 vending_machine.in_stock(cola, 3)
 
 vending_machine.to_buy(suica, cola)
@@ -62,4 +71,4 @@ vending_machine.in_stock(water, 5)
 
 vending_machine.to_buy(suica, redbull)
 
-p Vending_Machine::DRINK_LIST
+vending_machine.stock_info

@@ -1,7 +1,13 @@
 class Suica
   attr_accessor :balance
+  attr_reader :age, :sex
 
-  def initialize(balance = 0)
+  FEMALE = :female
+  MALE = :male
+
+  def initialize(age, sex, balance = 0)
+    @age = age
+    @sex = sex
     @balance = balance
   end
 
@@ -21,15 +27,16 @@ class Drink
 end
 
 class Vending_Machine
-  attr_accessor :sales, :drink_list
+  attr_reader :sales, :drink_list, :sales_info, :purchase_time
 
   def initialize(sales = 0)
     @sales = sales
     @drink_list = []
+    @sales_info = []
   end
 
   # drinkと本数を指定して在庫に追加する
-  def in_stock(drink, stock)
+  def restock(drink, stock)
     drink.stock += stock
     @drink_list.push(drink).uniq!
   end
@@ -43,32 +50,13 @@ class Vending_Machine
     end
   end
 
-  def to_buy(suica, drink)
+  def buy(suica, drink)
     if drink.stock > 1 && drink.price <= suica.balance
       drink.stock -= 1
       @sales += drink.price
       suica.balance -= drink.price
+      @purchase_time = Time.new
+      @sales_info.push(suica.age, suica.sex, @purchase_time, drink.name)
     end
   end
 end
-
-suica = Suica.new(500)
-suica.charge_amount(1000)
-suica.charge_amount(1000)
-
-cola = Drink.new(name: 'cola', price: 120)
-
-vending_machine = Vending_Machine.new
-vending_machine.in_stock(cola, 10)
-vending_machine.in_stock(cola, 3)
-
-vending_machine.to_buy(suica, cola)
-
-redbull = Drink.new(name: 'redbull', price: 200)
-vending_machine.in_stock(redbull, 5)
-water = Drink.new(name: 'water', price: 100)
-vending_machine.in_stock(water, 5)
-
-vending_machine.to_buy(suica, redbull)
-
-vending_machine.stock_info

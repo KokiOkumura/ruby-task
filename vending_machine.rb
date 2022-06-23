@@ -1,64 +1,33 @@
-class Suica
-  attr_accessor :balance
-
-  def initialize(balance = 0)
-    @balance = balance
-  end
-
-  def charge_amount(money)
-    @balance += money if money >= 100
-  end
-end
-
-class Drink
-  attr_accessor :name, :price, :stock
-
-  def initialize(name:, price:)
-    @name = name
-    @price = price
-    @stock = 0
-  end
-end
-
 class Vending_Machine
-  attr_accessor :sales
+  attr_reader :sales, :drink_list, :sales_info, :purchased_at
 
   def initialize(sales = 0)
     @sales = sales
+    @drink_list = []
+    @sales_info = []
   end
 
-  def in_stock(drink, stock)
-    drink.stock += stock
+  # drinkと本数を指定して在庫に追加する
+  def add_drink(drink, stock)
+    stock.times do
+      @drink_list.push(drink)
+    end
   end
 
-  def drink_info(drink)
-    p drink.name
-    p drink.price
-    p drink.stock
+  # 商品の在庫を表示させる
+  def stock_info
+    @drink_list.uniq.each do |s|
+      puts "商品名：#{s.name}\t値段:#{s.price}\t在庫:#{@drink_list.count(s)}"
+    end
   end
 
-  def to_buy(suica, drink)
-    if drink.stock > 1 && drink.price <= suica.balance
-      drink.stock -= 1
+  def buy(suica, drink)
+    if @drink_list.include?(drink) && drink.price <= suica.balance
+      @drink_list.delete_at(@drink_list.index(drink))
       @sales += drink.price
       suica.balance -= drink.price
+      @purchased_at = Time.new
+      @sales_info.push(suica.age, suica.sex, @purchased_at, drink.name)
     end
   end
 end
-
-suica = Suica.new(500)
-suica.charge_amount(1000)
-suica.charge_amount(1000)
-
-drink = Drink.new(name: 'cola', price: 120)
-drink2 = Drink.new(name: 'redbull', price: 200)
-
-vending_machine = Vending_Machine.new
-vending_machine.in_stock(drink, 5)
-vending_machine.in_stock(drink, 3)
-vending_machine.to_buy(suica, drink)
-vending_machine.drink_info(drink)
-vending_machine.sales
-
-# vending_machine.in_stock(drink2, 5)
-# vending_machine.drink_info(drink2, 5)

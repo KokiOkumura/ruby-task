@@ -12,3 +12,4 @@ class Suica
     @balance += money if money >= 100
   end
 end
+
